@@ -1,0 +1,13 @@
+from transformers import pipeline
+
+classifier = pipeline("sentiment-analysis")
+
+texts = [
+    "I love artificial intelligence!",
+    "This project is not complicated.",
+    "The future with AI looks promising."
+]
+
+for t in texts:
+    result = classifier(t)
+    print(t, result)
