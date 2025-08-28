@@ -1,0 +1,73 @@
+#with multiple tasks and movement
+
+import time
+from collections import deque
+
+grid = [
+    ['.', '.', '.', 'O', '.'],
+    ['O', 'O', '.', 'O', '.'],
+    ['.', '.', '.', '.', 'T'],
+    ['.', 'O', 'O', '.', 'T'],
+    ['A', '.', '.', '.', '.']
+]
+
+start_x, start_y = 4, 0
+
+def print_grid():
+    for row in grid:
+        print(' '.join(row))
+    print()
+
+def find_targets():
+    return [(i, j) for i in range(len(grid)) for j in range(len(grid[0])) if grid[i][j] == 'T']
+
+def bfs(start, goal):
+    queue = deque([(start, [])])
+    visited = set([start])
+    directions = [(0, 1), (-1, 0), (0, -1), (1, 0)]
+
+    while queue:
+        (x, y), path = queue.popleft()
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]):
+                if (nx, ny) == goal:
+                    return path + [(nx, ny)]
+                if grid[nx][ny] == '.' and (nx, ny) not in visited:
+                    visited.add((nx, ny))
+                    queue.append(((nx, ny), path + [(nx,ny)]))
+    return None
+
+print("Initial Grid:")
+print_grid()
+time.sleep(1)
+
+x, y = start_x, start_y
+
+while True:
+    targets = find_targets()
+    if not targets:
+        print(" All targets reached!")
+        break
+
+    shortest_path = None
+    for target in targets:
+        path = bfs((x, y), target)
+        if path and (shortest_path is None or len(path) < len(shortest_path)):
+            shortest_path = path
+
+    if shortest_path:
+        for step_num, (nx, ny) in enumerate(shortest_path, 1):
+            grid[x][y] = '.'
+            x, y = nx, ny
+            grid[x][y] = 'A'
+            print(f" Step {step_num}: Moved to ({x}, {y})")
+            print_grid()
+            time.sleep(1)
+        print(" Target reached!\n")
+        grid[x][y] = 'A'
+        grid[x][y] = '.'  
+    else:
+        print(" No reachable targets.")
+        break
+
