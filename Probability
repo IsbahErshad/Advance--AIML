@@ -1,0 +1,19 @@
+import random
+
+# Sample space (S): Rolling a fair 6-sided die
+sample_space = [1, 2, 3, 4, 5, 6]
+
+# Event A: Rolling an even number
+event_A = [2, 4, 6]
+
+# Probability of event A
+prob_A = len(event_A) / len(sample_space)
+
+print("Sample space:", sample_space)
+print("Event A (even numbers):", event_A)
+print("P(A):", prob_A)
+
+# Random trial
+outcome = random.choice(sample_space)
+print("Random outcome from trial:", outcome)
+print("Does the outcome belong to A?", outcome in event_A)
