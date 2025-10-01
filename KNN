@@ -1,0 +1,31 @@
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+
+# Load Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
+
+# Train KNN
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X_train, y_train)
+
+# Predict
+y_pred = knn.predict(X_test)
+
+# Show predictions
+correct = 0
+print("Predictions (Correct & Incorrect):")
+for actual, predicted in zip(y_test, y_pred):
+    if actual == predicted:
+        print(f"Correct:   Actual = {actual}, Predicted = {predicted}")
+        correct += 1
+    else:
+        print(f"Incorrect: Actual = {actual}, Predicted = {predicted}")
+
+accuracy = correct / len(y_test)
+print(f"\nAccuracy: {accuracy:.2f}")
