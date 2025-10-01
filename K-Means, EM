@@ -1,0 +1,38 @@
+import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.mixture import GaussianMixture
+from sklearn.preprocessing import StandardScaler
+
+# Load CSV dataset (e.g., iris.csv)
+from sklearn.datasets import load_iris
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+
+# Preprocessing
+scaler = StandardScaler()
+data = scaler.fit_transform(df)
+
+# K-Means Clustering
+kmeans = KMeans(n_clusters=3, random_state=1)
+kmeans_labels = kmeans.fit_predict(data)
+
+# EM Clustering (Gaussian Mixture)
+em = GaussianMixture(n_components=3, random_state=1)
+em_labels = em.fit_predict(data)
+
+# Add labels to DataFrame
+df["KMeans"] = kmeans_labels
+df["EM"] = em_labels
+
+# Show first 10 rows
+print("KMeans vs EM Clustering Labels (first 10 rows):")
+print(df[["KMeans", "EM"]].head(10))
+
+# Compare clustering quality using silhouette score
+from sklearn.metrics import silhouette_score
+
+kmeans_score = silhouette_score(data, kmeans_labels)
+em_score = silhouette_score(data, em_labels)
+
+print(f"\nSilhouette Score - KMeans: {kmeans_score:.2f}")
+print(f"Silhouette Score - EM:     {em_score:.2f}")
