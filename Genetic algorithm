@@ -1,0 +1,53 @@
+import random
+
+def fitness(x):
+    return x*x
+
+def decode(ch):
+    return int(ch, 2)
+
+def select(pop):
+    scores = [fitness(decode(c)) for c in pop]
+    total = sum(scores)
+    pick = random.uniform(0, total)
+    curr = 0
+    for c, s in zip(pop, scores):
+        curr += s
+        if curr >= pick:
+            return c
+
+def crossover(a, b):
+    p = random.randint(1, len(a)-1)
+    return a[:p] + b[p:], b[:p] + a[p:]
+
+def mutate(c):
+    i = random.randint(0, len(c)-1)
+    b = '1' if c[i]=='0' else '0'
+    return c[:i] + b + c[i+1:]
+
+pop = ['{:05b}'.format(random.randint(0,31)) for _ in range(6)]
+
+for gen in range(10):
+    print("Generation", gen)
+    print("Population:", pop)
+    print("Decoded:", [decode(c) for c in pop])
+    print("Fitness:", [fitness(decode(c)) for c in pop])
+    best = max(pop, key=lambda c: fitness(decode(c)))
+    print("Best:", best, "Value:", decode(best), "Fitness:", fitness(decode(best)))
+    new = []
+    for _ in range(3):
+        p1 = select(pop)
+        p2 = select(pop)
+        c1, c2 = crossover(p1, p2)
+        if random.random() < 0.2:
+            c1 = mutate(c1)
+        if random.random() < 0.2:
+            c2 = mutate(c2)
+        new.append(c1)
+        new.append(c2)
+    pop = new
+
+final_best = max(pop, key=lambda c: fitness(decode(c)))
+print("\nFinal Best Chromosome:", final_best)
+print("Decoded X:", decode(final_best))
+print("Fitness:", fitness(decode(final_best)))
