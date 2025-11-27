@@ -1,0 +1,11 @@
+from surprise import SVD, Dataset, Reader
+from surprise.model_selection import train_test_split
+from surprise import accuracy
+
+data = Dataset.load_builtin('ml-100k')
+train, test = train_test_split(data, test_size=0.2)
+algo = SVD()
+algo.fit(train)
+pred = algo.test(test)
+rmse = accuracy.rmse(pred)
+print("RMSE:", rmse)
