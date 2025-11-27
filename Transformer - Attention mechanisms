@@ -1,0 +1,60 @@
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+def draw_box(ax, x, y, label, color):
+    ax.add_patch(patches.Rectangle((x, y), 2, 1, edgecolor='black', facecolor=color))
+    ax.text(x + 1, y + 0.5, label, ha='center', va='center', fontsize=9)
+
+def draw_arrow(ax, start, end):
+    ax.annotate('', xy=end, xytext=start,
+                arrowprops=dict(arrowstyle='->', lw=1.5, color='black'))
+
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.set_xlim(0, 10)
+ax.set_ylim(0, 7)
+ax.axis('off')
+
+# Draw Boxes
+
+# Encoder
+draw_box(ax, 1, 5.5, 'Input Embedding', 'lightblue')
+draw_box(ax, 1, 4.2, 'Self-Attention', 'lightblue')
+draw_box(ax, 1, 2.9, 'Feed Forward', 'lightblue')
+draw_box(ax, 1, 1.6, 'Encoder Output', 'lightblue')
+
+# Decoder
+draw_box(ax, 6, 5.5, 'Output Embedding', 'lightgreen')
+draw_box(ax, 6, 4.2, 'Masked Attention', 'lightgreen')
+draw_box(ax, 6, 2.9, 'Cross Attention', 'lightgreen')
+draw_box(ax, 6, 1.6, 'Feed Forward', 'lightgreen')
+draw_box(ax, 6, 0.3, 'Output', 'lightgreen')
+
+# Attention module (middle)
+draw_box(ax, 3.5, 3.5, 'Query\nKey\nValue', 'lightcoral')
+
+
+# Arrows: Encoder flow (vertical)
+draw_arrow(ax, (2, 5.5), (2, 4.2 + 1))   # Input Embedding → Self-Attention
+draw_arrow(ax, (2, 4.2), (2, 2.9 + 1))   # Self-Attention → Feed Forward
+draw_arrow(ax, (2, 2.9), (2, 1.6 + 1))   # Feed Forward → Encoder Output
+
+# Arrows: Decoder flow (vertical)
+draw_arrow(ax, (7, 5.5), (7, 4.2 + 1))   # Output Embedding → Masked Attention
+draw_arrow(ax, (7, 4.2), (7, 2.9 + 1))   # Masked Attention → Cross Attention
+draw_arrow(ax, (7, 2.9), (7, 1.6 + 1))   # Cross Attention → Feed Forward
+draw_arrow(ax, (7, 1.6), (7, 0.3 + 1))   # Feed Forward → Output
+
+# Arrows: Encoder → Decoder (Cross-Attention)
+# From right edge of Encoder Output → left edge of Cross Attention
+draw_arrow(ax, (1 + 2, 1.6 + 0.5), (6, 2.9 + 0.5))
+
+# Arrows: Attention Module Connections
+# Encoder Output → QKV (from right edge)
+draw_arrow(ax, (1 + 2, 1.6 + 0.5), (3.5, 3.5 + 0.2))
+
+# Decoder Masked Attention → QKV (from left edge)
+draw_arrow(ax, (6, 4.2 + 0.5), (3.5 + 2, 3.5 + 0.8))
+
+plt.title('Transformer Architecture', fontsize=12)
+plt.tight_layout()
+plt.show()
