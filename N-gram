@@ -1,0 +1,39 @@
+import math
+from collections import defaultdict
+import random
+
+text = """the cat sat on the mat the dog sat on the rug the cat lay on the mat""".split()
+
+ngrams = defaultdict(lambda: defaultdict(int))
+vocab = set(text)
+
+for i in range(len(text)-1):
+    w1 = text[i]
+    w2 = text[i+1]
+    ngrams[w1][w2] += 1
+
+def prob(w1, w2):
+    total = sum(ngrams[w1].values())
+    return (ngrams[w1][w2] + 1) / (total + len(vocab))
+
+def generate(start, length):
+    out = [start]
+    for _ in range(length-1):
+        next_words = list(ngrams[out[-1]].keys())
+        weights = [prob(out[-1], w) for w in next_words]
+        out.append(random.choices(next_words, weights=weights)[0])
+    return " ".join(out)
+
+def perplexity(test):
+    p = 0
+    N = len(test)-1
+    for i in range(N):
+        p += -math.log(prob(test[i], test[i+1]))
+    return math.exp(p/N)
+
+generated = generate("the", 10)
+test_sent = "the cat sat on the mat".split()
+px = perplexity(test_sent)
+
+print("Generated Text:", generated)
+print("Perplexity:", px)
